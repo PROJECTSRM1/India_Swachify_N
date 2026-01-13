@@ -1,0 +1,74 @@
+import { createContext, useContext, useState } from "react";
+
+
+export interface CartItem {
+  id: number;
+  title: string;
+  image: string;
+  quantity: number;
+  price: string | number;
+  totalPrice: number;
+
+  basePrice?: number;
+  operatorCharge?: number;
+  fuelCharge?: number;
+  deliveryCharge?: number;
+  unloadingCharge?: number;
+  unit?: string;
+
+  customerName: string;
+  email: string;
+
+  deliveryType: string;
+
+  deliveryDate: string;     
+  deliveryTime: string; 
+
+  contact: string;
+  address: string;
+  instructions: string;
+
+    // ✅ ADD THESE TWO LINES
+  paymentDone?: boolean;
+  workStatus?: "pending" | "completed";
+
+}
+
+
+
+interface CartContextType {
+  cart: CartItem[];
+  addToCart: (item: CartItem) => void;
+  removeFromCart: (id: number) => void;
+  clearCart: () => void; 
+}
+
+
+const CartContext = createContext<CartContextType | undefined>(undefined);
+
+
+export const CartProvider = ({ children }: any) => {
+  const [cart, setCart] = useState<CartItem[]>([]);
+
+
+  const addToCart = (item: CartItem) => {
+    setCart((prev) => [...prev, item]);
+  };
+  const removeFromCart = (id: number) => {
+    setCart((prev) => prev.filter((item) => item.id !== id));
+  };
+  const clearCart = () => {
+    setCart([]);  
+  };
+
+  return (
+    <CartContext.Provider value={{ cart, addToCart, removeFromCart,clearCart }}>
+      {children}
+    </CartContext.Provider>
+  );
+};
+export const useCart = () => {
+  const ctx = useContext(CartContext);
+  if (!ctx) throw new Error("useCart must be used inside CartProvider");
+  return ctx;
+}
