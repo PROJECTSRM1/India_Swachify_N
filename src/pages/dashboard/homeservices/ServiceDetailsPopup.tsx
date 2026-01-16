@@ -5,7 +5,7 @@ interface SubService {
   title: string;
   description: string;
   image: string;
-  totalprice: string;
+  // totalprice: string;
 }
 
 export default function ServiceDetailsPopup({
@@ -13,7 +13,7 @@ export default function ServiceDetailsPopup({
   onClose,
   mainTitle,
   subServices,
-  onOpenForm,
+  // onOpenForm,
 }: {
   open: boolean;
   onClose: () => void;
@@ -26,7 +26,7 @@ export default function ServiceDetailsPopup({
       open={open}
       onCancel={onClose}
       footer={null}
-      width={820}
+      width={subServices.length <= 2 ? 560 : 820}  
       centered
       className="sw-hs-sdp-modal"
     >
@@ -43,15 +43,7 @@ export default function ServiceDetailsPopup({
                 <h4 className="sw-hs-sdp-card-title">{service.title}</h4>
                 <p className="sw-hs-sdp-desc">{service.description}</p>
 
-                <div className="sw-hs-sdp-footer">
-                  <span className="sw-hs-sdp-price">{service.totalprice}</span>
-                  <button
-                    className="sw-hs-sdp-btn"
-                    onClick={() => onOpenForm(service)}
-                  >
-                    View Details
-                  </button>
-                </div>
+              
               </div>
             </div>
           ))}

@@ -6,17 +6,28 @@ import { Card, Button,  Modal } from "antd";
 import { popupData } from "./popupData"; // existing
 import type { PopupCategory } from "./popupData"; // existing
 import { ToolOutlined } from "@ant-design/icons";
+import {
+  cleaningServicesPopupData,
+  type CleaningServiceKey,
+  type CleaningServicePopup,
+} from "./CleaningServicePopupdata";
 
-import cleaningservices from "../../../assets/HomeServices/cleaningservices.jpg";
-import electricalservices from "../../../assets/HomeServices/electricalservices.jpg";
-import plumbingservices from "../../../assets/HomeServices/plumbingservices.jpg";
-import appliancesrepair from "../../../assets/HomeServices/appliancesrepair.jpg";
-import carpentryfurniture from "../../../assets/HomeServices/carpentary&furniture.jpg";
-import paintingrenovation from "../../../assets/HomeServices/painting&renovation.jpg";
-import hvaccooling from "../../../assets/HomeServices/hvac&cooling.jpg";
-import gardeningoutdoor from "../../../assets/HomeServices/gardening&outdoorcleaning.jpg";
-import handymangeneralrepair from "../../../assets/HomeServices/handymangenralrepair.jpg";
-import homesecurityservice from "../../../assets/HomeServices/homesecuritservices.webp";
+
+
+
+// import cleaningservices from "../../../assets/HomeServices/cleaningservices.jpg";
+// import electricalservices from "../../../assets/HomeServices/electricalservices.jpg";
+// import plumbingservices from "../../../assets/HomeServices/plumbingservices.jpg";
+// import appliancesrepair from "../../../assets/HomeServices/appliancesrepair.jpg";
+// import carpentryfurniture from "../../../assets/HomeServices/carpentary&furniture.jpg";
+// import paintingrenovation from "../../../assets/HomeServices/painting&renovation.jpg";
+// import hvaccooling from "../../../assets/HomeServices/hvac&cooling.jpg";
+// import gardeningoutdoor from "../../../assets/HomeServices/gardening&outdoorcleaning.jpg";
+// import handymangeneralrepair from "../../../assets/HomeServices/handymangenralrepair.jpg";
+// import homesecurityservice from "../../../assets/HomeServices/homesecuritservices.webp";
+import HomeCleaning from "../../../assets/HomeServices/HomeCleaning.jpg"
+import CommercialCleaning from "../../../assets/HomeServices/CommercialCleaning.jpg"
+import VehicleCleaning from "../../../assets/HomeServices/VehicleCleaning.jpg"
 
 import ServiceDetailsPopup from "./ServiceDetailsPopup";
 import ServiceRequestForm from "./ServiceDetailsForm";
@@ -35,16 +46,23 @@ export default function HomeServices({
   clearSearch,
 }: HomeServicesProps) {
 
-  const [selectedService, setSelectedService] = useState<PopupCategory | null>(null);
+  const [_selectedService, setSelectedService] = useState<PopupCategory | null>(null);
   const [selectedSubService, setSelectedSubService] = useState<any>(null);
 
-  const [detailsPopupOpen, setDetailsPopupOpen] = useState(false);
+  const [_detailsPopupOpen, setDetailsPopupOpen] = useState(false);
   const [formPopupOpen, setFormPopupOpen] = useState(false);
 
   // NEW: open embedded cleaning modal
   const [cleaningModalOpen, setCleaningModalOpen] = useState(false);
 
-  const [showAll, setShowAll] = useState(false);
+  
+cleaningServicesPopupData
+
+// selected popup state (DO NOT rename)
+const [cleaningPopupData, setCleaningPopupData] =
+  useState<CleaningServicePopup | null>(null);
+
+  // const [showAll, setShowAll] = useState(false);
   const SERVICE_KEYWORD_MAP: Record<string, string[]> = {
   "Cleaning Services": [
     //main services
@@ -212,41 +230,67 @@ export default function HomeServices({
 }, [searchQuery, cleaningModalOpen]);
 
 
-  const services = [
-    { title: "Cleaning Services", description: "Professional cleaning service", price: "$120", image: cleaningservices },
-    { title: "Electrical Services", description: "Licensed electrical repair", price: "$130", image: electricalservices },
-    { title: "Plumbing Service", description: "Expert plumbing repairs", price: "$120", image: plumbingservices },
-    { title: "Appliances Repair", description: "All home appliance repairs", price: "$100", image: appliancesrepair },
-    { title: "Carpentry & Furniture", description: "Woodwork & furniture repairs", price: "$200", image: carpentryfurniture },
-    { title: "Painting & Renovation", description: "Interior & exterior painting", price: "$400", image: paintingrenovation },
-    { title: "HVAC & Cooling", description: "AC repair & service", price: "$150", image: hvaccooling },
-    { title: "Gardening & Outdoor Care", description: "Garden maintenance", price: "$90", image: gardeningoutdoor },
-    { title: "Handyman / General Repair", description: "General repairs", price: "$110", image: handymangeneralrepair },
-    { title: "Home Security Services", description: "CCTV installation", price: "$250", image: homesecurityservice },
-  ];
+  // const services = [
+  //   { title: "Cleaning Services", description: "Professional cleaning service", price: "$120", image: cleaningservices },
+  //   { title: "Electrical Services", description: "Licensed electrical repair", price: "$130", image: electricalservices },
+  //   { title: "Plumbing Service", description: "Expert plumbing repairs", price: "$120", image: plumbingservices },
+  //   { title: "Appliances Repair", description: "All home appliance repairs", price: "$100", image: appliancesrepair },
+  //   { title: "Carpentry & Furniture", description: "Woodwork & furniture repairs", price: "$200", image: carpentryfurniture },
+  //   { title: "Painting & Renovation", description: "Interior & exterior painting", price: "$400", image: paintingrenovation },
+  //   { title: "HVAC & Cooling", description: "AC repair & service", price: "$150", image: hvaccooling },
+  //   { title: "Gardening & Outdoor Care", description: "Garden maintenance", price: "$90", image: gardeningoutdoor },
+  //   { title: "Handyman / General Repair", description: "General repairs", price: "$110", image: handymangeneralrepair },
+  //   { title: "Home Security Services", description: "CCTV installation", price: "$250", image: homesecurityservice },
+  // ];
 
-  const displayedCards = showAll ? services : services.slice(0, 4);
+ const services: { title: CleaningServiceKey; image: string }[] = [
+  { title: "Home Cleaning", image: HomeCleaning },
+  { title: "Commercial Cleaning", image: CommercialCleaning },
+  { title: "Vehicle Cleaning", image: VehicleCleaning },
+];
+
+
+
+
+  // const displayedCards = showAll ? services : services.slice(0, 4);
+
+
+
 
   // OPEN POPUP 1 (modified - opens cleaning modal for cleaning card)
-  const openDetailsPopup = (serviceTitle: string) => {
-    // If user clicked Cleaning Services, open the embedded CleaningService modal
-    if (serviceTitle === "Cleaning Services") {
-      setCleaningModalOpen(true);
-      // ensure other popups are closed
-      setDetailsPopupOpen(false);
-      setFormPopupOpen(false);
-      return;
-    }
+  // const openDetailsPopup = (serviceTitle: string) => {
+  //   // If user clicked Cleaning Services, open the embedded CleaningService modal
+  //   if (serviceTitle === "Cleaning Services") {
+  //     setCleaningModalOpen(true);
+  //     // ensure other popups are closed
+  //     setDetailsPopupOpen(false);
+  //     setFormPopupOpen(false);
+  //     return;
+  //   }
 
-    const data = popupData[serviceTitle];
-    if (!data) return;
+  //   const data = popupData[serviceTitle];
+  //   if (!data) return;
 
-    setSelectedService(data);
-    setSelectedSubService(null);
+  //   setSelectedService(data);
+  //   setSelectedSubService(null);
 
-    setFormPopupOpen(false);
-    setDetailsPopupOpen(true);
-  };
+  //   setFormPopupOpen(false);
+  //   setDetailsPopupOpen(true);
+  // };
+
+
+//  const openDetailsPopup = (serviceTitle: CleaningServiceKey) => {
+//   const data = cleaningServicesPopupData[serviceTitle];
+
+//   setSelectedService(data);
+//   setDetailsPopupOpen(true);
+// };
+
+const openCleaningDetailsPopup = (key: CleaningServiceKey) => {
+  setCleaningPopupData(cleaningServicesPopupData[key]);
+};
+
+
 
   // OPEN POPUP 2
   const openFormPopup = (subService: any) => {
@@ -290,23 +334,26 @@ export default function HomeServices({
           <div className="sw-hs-banner-icon"><ToolOutlined /></div>
 
           <div className="sw-hs-banner-text">
-            <h2 className="sw-hs-banner-title">Home Services</h2>
+            {/* <h2 className="sw-hs-banner-title">Home Services</h2> */}
+               <h2 className="sw-hs-banner-title">Cleaning Services</h2>
+             
             <p className="sw-hs-banner-subtitle">{services.length} services available</p>
           </div>
         </div>
 
-  <Button
+  {/* <Button
   size="small"
   className="sw-hs-header-viewall-btn"
   onClick={() => setShowAll(!showAll)}
 >
   {showAll ? "Show Less" : "View All Services"}
-  </Button>
+  </Button> */}
 
       </div>
+      
 
       {/* GRID */}
-      <div className="sw-hs-services-card-grid">
+      {/* <div className="sw-hs-services-card-grid">
         {displayedCards.map((service, i) => (
           <div className="sw-hs-service-card-wrapper" key={i}>
             <Card
@@ -326,7 +373,40 @@ export default function HomeServices({
             </Card>
           </div>
         ))}
-      </div>
+      </div> */}
+
+      <div className="sw-hs-services-card-grid">
+  {services.map((service, i) => (
+    <div className="sw-hs-service-card-wrapper" key={i}>
+      <Card
+        hoverable
+        className="sw-hs-service-card"
+        cover={
+          <img
+            src={service.image}
+            alt={service.title}
+            className="sw-hs-service-image"
+          />
+        }
+      >
+       
+           <h3 className="sw-hs-service-title">{service.title}</h3>
+
+        <Button
+          className="sw-hs-details-btn"
+          block
+          //  onClick={() => openDetailsPopup(service.popupKey)}
+          onClick={() => openCleaningDetailsPopup(service.title)}
+        >
+          View Details
+        </Button>
+       
+       
+      </Card>
+    </div>
+  ))}
+</div>
+
 
 <Modal
   open={cleaningModalOpen}
@@ -355,7 +435,7 @@ export default function HomeServices({
 
 
       {/* SERVICE DETAILS POPUP (existing) */}
-      {detailsPopupOpen && selectedService && (
+      {/* {detailsPopupOpen && selectedService && (
         <ServiceDetailsPopup
           open={detailsPopupOpen}
           onClose={() => setDetailsPopupOpen(false)}
@@ -363,7 +443,18 @@ export default function HomeServices({
           subServices={selectedService.subServices}
           onOpenForm={openFormPopup}
         />
-      )}
+      )} */}
+
+      {cleaningPopupData && (
+  <ServiceDetailsPopup
+    open={true}
+    onClose={() => setCleaningPopupData(null)}
+    mainTitle={cleaningPopupData.mainTitle}
+    subServices={cleaningPopupData.subServices}
+    onOpenForm={openFormPopup}
+  />
+)}
+
 
       {/* SERVICE REQUEST FORM (existing) */}
       {formPopupOpen && selectedSubService && (
@@ -382,3 +473,10 @@ export default function HomeServices({
     </div>
   );
 }
+
+
+
+
+
+
+
