@@ -4,19 +4,19 @@ import './App.css';
 import ServicesPage from './pages/dashboard/homerentals/pages/ServicesPage.tsx';
 
 function App() {
-   <div className="sw-hr-app-root">
-     
-      <main className="sw-hr-app-main">
-        <ServicesPage />
-      </main>
-     
-    </div>
+  <div className="sw-hr-app-root">
+
+    <main className="sw-hr-app-main">
+      <ServicesPage />
+    </main>
+
+  </div>
   return (
     <CartProvider>
-      <AppRoutes />  
+      <AppRoutes />
     </CartProvider>
   );
-  
+
 }
 
 export default App;
